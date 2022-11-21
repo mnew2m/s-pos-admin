@@ -1,25 +1,36 @@
 <template>
     <v-app>
-        <div>
-            <!-- v-if : 조건에 따라 컴포넌트가 실제로 제거되고 생성됨
-                 v-show : 조건에 따라 css display 속성만 변경됨 -->
-            <AdminHeaderPC v-if="!isMobile" />
-            <AdminHeaderMO v-else @drawerStatus="drawerStatus" />
-            <v-navigation-drawer
-                v-model="drawer"
-                app
-                clipped
-                hide-overlay
-                :style="{ top: $vuetify.application.top + 'px' }">
-            </v-navigation-drawer>
-        </div>
+        <!-- v-if : 조건에 따라 컴포넌트가 실제로 제거되고 생성됨
+                v-show : 조건에 따라 css display 속성만 변경됨 -->
+        <AdminHeaderPC v-if="!isMobile" @pcSearchStatus="pcSearchStatus" />
+        <AdminSearchPC v-if="!isMobile" v-show="pcSearchDrawer" />
+
+        <AdminHeaderMO v-if="isMobile" @moSearchStatus="moSearchStatus" />
+        <AdminSearchMO v-if="isMobile" v-show="moSearchDrawer" />
+        <AdminMenuMO v-if="isMobile" v-show="moMenuDrawer" />
+        <!--<v-navigation-drawer absolute temporary v-model="moMenuDrawer" />
+        <v-navigation-drawer absolute temporary right v-model="moSearchDrawer" />-->
         <v-main>
-            <v-container>
-                <v-chip-group>
-                    <v-chip v-for="(item, idx) in pageGroup" :key="idx" close @click="pageOpen(idx)" @click:close="pageClose(idx)">
-                        {{ item }}
-                    </v-chip>
-                </v-chip-group>
+            <v-container class="pa-0">
+                <v-card tile>
+                    <v-card-actions>
+                        <v-btn text> Active Menu </v-btn>
+                        <v-spacer />
+                        <v-btn icon @click="menuShow = !menuShow">
+                            <v-icon>{{ menuShow ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                        </v-btn>
+                    </v-card-actions>
+                    <v-expand-transition>
+                        <div v-show="menuShow" class="px-2">
+                            <v-divider />
+                            <v-chip-group>
+                                <v-chip v-for="(item, idx) in pageGroup" :key="idx" close @click="pageOpen(idx)" @click:close="pageClose(idx)">
+                                    {{ item }}
+                                </v-chip>
+                            </v-chip-group>
+                        </div>
+                    </v-expand-transition>
+                </v-card>
             </v-container>
         </v-main>
         <AdminFooterMO v-if="isMobile" />
@@ -29,8 +40,14 @@
 <script setup>
 import { ref, watch } from 'vue';
 import AdminHeaderPC from '@/views/contents/admin/pc/AdminHeaderPC.vue';
+import AdminSearchPC from '@/views/contents/admin/pc/AdminSearchPC.vue';
 import AdminHeaderMO from '@/views/contents/admin/mobile/AdminHeaderMO.vue';
+import AdminMenuMO from '@/views/contents/admin/mobile/AdminMenuMO.vue';
+import AdminSearchMO from '@/views/contents/admin/mobile/AdminSearchMO.vue';
 import AdminFooterMO from '@/views/contents/admin/mobile/AdminFooterMO.vue';
+
+let menuShow = ref(true);
+let moMenuDrawer = ref(true);
 
 /**
  * 해당 페이지 가로 사이즈를 보고
@@ -40,28 +57,34 @@ import AdminFooterMO from '@/views/contents/admin/mobile/AdminFooterMO.vue';
 let isMobile = ref(window.innerWidth < 600);
 const onResize = () => {
     isMobile.value = window.innerWidth < 600;
-    drawer.value = false; // 수동으로 mobile -> pc를 했을 때 drawer.value가 true로 변경돼서 임시로 적용함. (왜 바뀌지;;)
+    //pcSearchDrawer.value = false; // 수동으로 mobile -> pc를 했을 때 drawer.value가 true로 변경돼서 임시로 적용함. (왜 바뀌지;;)
 };
 window.addEventListener('resize', onResize);
 
 /**
- * navigation
+ * pc search navigation
  */
-let drawer = ref(false);
-//const drawerStatus = () => {
-//    console.log('drawerStatus 실행');
-//    drawer.value = !drawer.value;
-//}
-function drawerStatus() {
-    console.log('drawerStatus 실행');
-    drawer.value = !drawer.value;
+let pcSearchDrawer = ref(false);
+function pcSearchStatus() {
+    pcSearchDrawer.value = !pcSearchDrawer.value;
 }
-watch(drawer, () => {
-    console.log('drawer.value 변경 !! ', drawer.value);
+watch(pcSearchDrawer, () => {
+    console.log('pcSearchDrawer.value 변경 !! ', pcSearchDrawer.value);
+})
+
+/**
+ * mobile search navigation
+ */
+let moSearchDrawer = ref(false);
+function moSearchStatus() {
+    moSearchDrawer.value = !moSearchDrawer.value;
+}
+watch(moSearchDrawer, () => {
+    console.log('moSearchDrawer.value 변경 !! ', moSearchDrawer.value);
 })
 
 // active page sample
-let pageGroup = ref(['회원관리', '매장관리', '상품관리', '예약관리']);
+let pageGroup = ref(['회원관리', '매장관리', '상품관리', '예약관리', '회원관리', '매장관리', '상품관리', '예약관리', '회원관리', '매장관리', '상품관리', '예약관리']);
 // active page chip open
 const pageOpen = (idx) => {
     console.log('open :: ', idx);

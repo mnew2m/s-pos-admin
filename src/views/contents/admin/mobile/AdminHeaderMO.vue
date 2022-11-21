@@ -1,7 +1,11 @@
 <template>
     <v-app-bar app clipped-left flat>
-        <v-app-bar-nav-icon @click="drawerStatus"></v-app-bar-nav-icon>
-        <v-toolbar-title>Mobile Tool Bar</v-toolbar-title>
+        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+        <v-app-bar-title>Mobile Tool Bar</v-app-bar-title>
+        <v-spacer />
+        <v-btn icon @click="drawerStatus">
+            <v-icon>mdi-magnify</v-icon>
+        </v-btn>
     </v-app-bar>
 </template>
 
@@ -9,10 +13,10 @@
 import { defineEmits } from 'vue';
 
 const emit = defineEmits([
-    'drawerStatus'
+    'moSearchStatus'
 ])
 
 const drawerStatus = () => {
-    return emit('drawerStatus');
+    return emit('moSearchStatus');
 }
 </script>
