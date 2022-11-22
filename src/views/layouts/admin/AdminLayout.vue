@@ -42,8 +42,8 @@
                         <div v-show="menuShow" class="px-2">
                             <v-divider />
                             <v-chip-group>
-                                <v-chip v-for="(item, idx) in activeItems.value" :key="idx" close @click="pageOpen(idx)" @click:close="pageClose(idx)">
-                                    {{ item }}
+                                <v-chip v-for="item in activeItems.value" :key="item.name" close @click="pageOpen(item)" @click:close="pageClose(item)">
+                                    {{ item.name }}
                                 </v-chip>
                             </v-chip-group>
                         </div>
@@ -67,18 +67,27 @@ import { computed } from '@vue/composition-api';
 import store from '@/store/index';
 
 let menuShow = ref(true);
-let items = computed(() => { return store.state.menuStore.adminMenuList });
+let items = computed(() => store.getters['menuStore/getAdminMenuList']);
 console.log('AdminLayout -> ', items);
 
-const activeItems = ref([]);
-items.value.forEach(e => {
-    if(!e.active) activeItems.value.push(e);
-});
+const activeItems = computed(() => store.getters['menuStore/getActiveAdminMenuList']);
+console.log('⭐ activeItems : ', activeItems);
+//watch(items.value, () => {
+//    console.log('menuList 변경 !! ', items.value);
+//    items.value.forEach(e => {
+//        if(e.active) {
+//            console.log('activeItems push 대상 : ', e);
+//            activeItems.value.push(e);
+//        }
+//    });
+//});
+
 
 const addActiveItem = (item) => {
-    console.log('addActiveItem ---> ', item);
-    item.active = true;
-    activeItems.value.push(item);
+    console.log(item.name, item.active);
+    if(!item.active) {
+        store.dispatch('menuStore/activeMenu', item);
+    }
 }
 
 /**
@@ -127,14 +136,15 @@ watch(moSearchDrawer, () => {
 })
 
 // active page sample
-let pageGroup = ref(['회원관리', '매장관리', '상품관리', '예약관리', '회원관리', '매장관리', '상품관리', '예약관리', '회원관리', '매장관리', '상품관리', '예약관리']);
+//let pageGroup = ref(['회원관리', '매장관리', '상품관리', '예약관리', '회원관리', '매장관리', '상품관리', '예약관리', '회원관리', '매장관리', '상품관리', '예약관리']);
 // active page chip open
-const pageOpen = (idx) => {
-    console.log('open :: ', idx);
+const pageOpen = (item) => {
+    console.log('open :: ', item.name);
 }
 // active page chip close
-const pageClose = (idx) => {
-    console.log('close :: ', idx);
-    pageGroup.value.splice(idx, 1);
+const pageClose = (item) => {
+    console.log('close :: ', item.name);
+    //pageGroup.value.splice(idx, 1);
+    store.dispatch('menuStore/inactiveMenu', item);
 }
 </script>
