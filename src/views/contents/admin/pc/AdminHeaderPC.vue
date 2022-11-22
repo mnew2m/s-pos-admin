@@ -1,38 +1,34 @@
 <template>
-    <v-app-bar app clipped-left flat>
-      <v-app-bar-title>PC Tool Bar</v-app-bar-title>
+    <v-app-bar app clipped-right flat>
+      <v-app-bar-title class="mr-10">PC Tool Bar</v-app-bar-title>
+      <v-tabs show-arrows>
+        <v-tab v-for="item in props.items" :key="item.name" @click="addActiveItem(item)">
+          {{ item.name }}
+        </v-tab>
+      </v-tabs>
       <v-spacer></v-spacer>
-      <v-btn icon @click="drawerStatus">
+      <v-btn icon @click="pcSearchStatus">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
-      <!--<template v-slot:extension>
-          <v-tabs
-            align-with-title
-            class="d-none d-sm-flex"
-          >
-            <v-tabs-slider color="yellow"></v-tabs-slider>
-  
-            <v-tab
-              v-for="item in items"
-              :key="item"
-            >
-              {{ item }}
-            </v-tab>
-          </v-tabs>
-        </template>-->
     </v-app-bar>
 </template>
 
 <script setup>
-import { defineEmits } from 'vue';
+import { defineProps, defineEmits } from 'vue';
+
+const props = defineProps(['items'])
+console.log('AdminHeaderPC props -> ', props);
 
 const emit = defineEmits([
-    'pcSearchStatus'
+    'pcSearchStatus',
+    'addActiveItem'
 ])
 
-const drawerStatus = () => {
+const pcSearchStatus = () => {
     return emit('pcSearchStatus');
 }
 
-//let items = ['1', '2', '3']
+const addActiveItem = (item) => {
+  return emit('addActiveItem', item);
+}
 </script>

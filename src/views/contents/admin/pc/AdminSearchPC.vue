@@ -3,8 +3,10 @@
         app
         clipped
         hide-overlay
+        right
         :style="{ top: $vuetify.application.top + 'px' }">
-        AdminSearchPC
+    <!--<v-navigation-drawer app right>-->
+        PC Search Navigation
     </v-navigation-drawer>
 </template>
 
